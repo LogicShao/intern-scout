@@ -171,14 +171,105 @@ class BeisenAdapter(BaseAdapter):
         return f"BeisenAdapter({self.display_name}, {self.source})"
 
 
-VIVO_CONFIG = {
-    "company": "vivo",
-    "display_name": "vivo",
-    "api_root": "https://hr-campus.vivo.com",
-    "site_root": "https://hr-campus.vivo.com",
-    "category": ["3"],
+BEISEN_TENANTS: dict[str, dict] = {
+    "vivo": {
+        "company": "vivo", "display_name": "vivo",
+        "api_root": "https://hr-campus.vivo.com",
+        "site_root": "https://hr-campus.vivo.com",
+        "category": ["3"],
+    },
+    "iflytek": {
+        "company": "iflytek", "display_name": "科大讯飞",
+        "api_root": "https://iflytek.zhiye.com",
+        "site_root": "https://iflytek.zhiye.com",
+        "category": ["3"],
+    },
+    "transsion": {
+        "company": "transsion", "display_name": "传音控股",
+        "api_root": "https://transsion.zhiye.com",
+        "site_root": "https://transsion.zhiye.com",
+        "category": ["3"],
+    },
+    "cxmt": {
+        "company": "cxmt", "display_name": "长鑫存储",
+        "api_root": "https://cxmt.zhiye.com",
+        "site_root": "https://cxmt.zhiye.com",
+        "category": ["3"],
+    },
+    "sany": {
+        "company": "sany", "display_name": "三一重工",
+        "api_root": "https://sany.zhiye.com",
+        "site_root": "https://sany.zhiye.com",
+        "category": ["3"],
+    },
+    "dahua": {
+        "company": "dahua", "display_name": "大华",
+        "api_root": "https://dahua.zhiye.com",
+        "site_root": "https://dahua.zhiye.com",
+        "category": ["3"],
+    },
+    "chery": {
+        "company": "chery", "display_name": "奇瑞汽车",
+        "api_root": "https://chery.zhiye.com",
+        "site_root": "https://chery.zhiye.com",
+        "category": ["3"],
+    },
+    "picc": {
+        "company": "picc", "display_name": "中国人保",
+        "api_root": "https://picc.zhiye.com",
+        "site_root": "https://picc.zhiye.com",
+        "category": ["3"],
+    },
+    "hellobike": {
+        "company": "hellobike", "display_name": "哈啰出行",
+        "api_root": "https://hellobike.zhiye.com",
+        "site_root": "https://hellobike.zhiye.com",
+        "category": ["3"],
+    },
+    "genertec": {
+        "company": "genertec", "display_name": "中国通用技术",
+        "api_root": "https://genertec.zhiye.com",
+        "site_root": "https://genertec.zhiye.com",
+        "category": ["3"],
+    },
+    "huolala": {
+        "company": "huolala", "display_name": "货拉拉",
+        "api_root": "https://huolala.zhiye.com",
+        "site_root": "https://huolala.zhiye.com",
+        "category": ["3"],
+    },
+    "ucloud": {
+        "company": "ucloud", "display_name": "UCloud",
+        "api_root": "https://ucloud.zhiye.com",
+        "site_root": "https://ucloud.zhiye.com",
+        "category": ["3"],
+    },
+    "sugon": {
+        "company": "sugon", "display_name": "中科曙光",
+        "api_root": "https://sugon.zhiye.com",
+        "site_root": "https://sugon.zhiye.com",
+        "category": ["3"],
+    },
 }
 
 
-def create_vivo() -> BeisenAdapter:
-    return BeisenAdapter(**VIVO_CONFIG)
+def create_beisen_adapter(slug: str) -> BeisenAdapter:
+    config = BEISEN_TENANTS.get(slug)
+    if not config:
+        raise KeyError(f"Unknown Beisen tenant: {slug}. Available: {list(BEISEN_TENANTS)}")
+    return BeisenAdapter(**config)
+
+
+create_vivo = lambda: create_beisen_adapter("vivo")
+create_iflytek = lambda: create_beisen_adapter("iflytek")
+create_transsion = lambda: create_beisen_adapter("transsion")
+create_cxmt = lambda: create_beisen_adapter("cxmt")
+create_sany = lambda: create_beisen_adapter("sany")
+create_dahua = lambda: create_beisen_adapter("dahua")
+create_chery = lambda: create_beisen_adapter("chery")
+create_picc = lambda: create_beisen_adapter("picc")
+create_hellobike = lambda: create_beisen_adapter("hellobike")
+create_genertec = lambda: create_beisen_adapter("genertec")
+create_huolala = lambda: create_beisen_adapter("huolala")
+create_ucloud = lambda: create_beisen_adapter("ucloud")
+create_sugon = lambda: create_beisen_adapter("sugon")

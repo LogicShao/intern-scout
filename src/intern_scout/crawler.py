@@ -6,7 +6,12 @@
     python -m intern_scout.crawler --all --keyword "数据分析" --limit 30
 """
 
-from intern_scout.platforms.beisen import create_vivo
+from intern_scout.platforms.beisen import (
+    create_vivo, create_iflytek, create_transsion, create_cxmt,
+    create_sany, create_dahua, create_chery, create_picc,
+    create_hellobike, create_genertec, create_huolala,
+    create_ucloud, create_sugon,
+)
 from intern_scout.platforms.feishu_atsx import create_xiaomi
 from intern_scout.platforms.huawei import create_huawei
 from intern_scout.platforms.oppo import create_oppo
@@ -14,10 +19,22 @@ from intern_scout.reporter import format_output
 from intern_scout.models import SearchResult
 
 ADAPTERS = {
-    "vivo": create_vivo,
-    "xiaomi": create_xiaomi,
-    "huawei": create_huawei,
-    "oppo": create_oppo,
+    "vivo":       create_vivo,
+    "xiaomi":     create_xiaomi,
+    "iflytek":    create_iflytek,
+    "transsion":  create_transsion,
+    "cxmt":       create_cxmt,
+    "sany":       create_sany,
+    "dahua":      create_dahua,
+    "chery":      create_chery,
+    "picc":       create_picc,
+    "hellobike":  create_hellobike,
+    "genertec":   create_genertec,
+    "huolala":    create_huolala,
+    "ucloud":     create_ucloud,
+    "sugon":      create_sugon,
+    "huawei":     create_huawei,
+    "oppo":       create_oppo,
 }
 
 
@@ -30,10 +47,15 @@ def crawl_one(company: str, keyword: str = "", limit: int = 20) -> SearchResult:
         )
     adapter = factory()
     page_size = getattr(adapter, "_page_size", 20)
-    result = adapter.fetch_all(keyword=keyword, max_pages=1, page_size=limit)
-    if result.ok and len(result.positions) > limit:
-        result.positions = result.positions[:limit]
-        result.fetched = len(result.positions)
+    for attempt in range(2):
+        result = adapter.fetch_all(keyword=keyword, max_pages=1, page_size=limit)
+        if result.ok or attempt == 1:
+            if result.ok and len(result.positions) > limit:
+                result.positions = result.positions[:limit]
+                result.fetched = len(result.positions)
+            return result
+        import time
+        time.sleep(2)
     return result
 
 
