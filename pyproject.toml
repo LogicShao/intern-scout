@@ -1,0 +1,26 @@
+[project]
+name = "intern-scout"
+version = "0.1.0"
+description = "中国科技公司官网实习岗位爬取工具 — 直接调用招聘站内部 API，无需登录"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31",
+    "pydantic>=2.0",
+    "loguru>=0.7",
+    "lxml>=5.0",
+    "beautifulsoup4>=4.12",
+    "openpyxl>=3.1",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+intern-scout = "intern_scout.crawler:main"
+intern-scout-beisen = "intern_scout.platforms.beisen:main"
+intern-scout-feishu = "intern_scout.platforms.feishu_atsx:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
