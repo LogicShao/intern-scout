@@ -2,7 +2,7 @@
 
 中国科技公司官网实习岗位爬取工具。直接调用招聘站内部 API，无需登录，无需代理。
 
-**14 家公司，500+ 实时实习岗位，一条命令全量搜索。**
+**17 家公司，1000+ 实时实习岗位，一条命令全量搜索。**
 
 ```bash
 intern-scout --all --keyword "后端" --limit 20 --output table
@@ -82,12 +82,14 @@ JSON 输出示例：
 
 ## 已支持公司
 
-### API 直连（14 家，无需浏览器）
+### API 直连（15 家，无需浏览器）
 
 | 公司 | ATS 平台 | 实习岗位数 |
 | ---- | -------- | ---------- |
 | **vivo** | 北森 iTalent | 141 |
 | **小米** | 飞书 ATSX | 478 |
+| **蔚来** | 飞书 ATSX | 424 |
+| **MiniMax** | 飞书 ATSX | 76 |
 | 科大讯飞 | 北森 iTalent | 27 |
 | 传音控股 | 北森 iTalent | 64 |
 | 长鑫存储 | 北森 iTalent | 13 |
@@ -160,46 +162,37 @@ JSON / Markdown 表格 / Excel
 
 ## 飞书 ATSX 扩展说明
 
-飞书招聘（Feishu Recruiting）是字节跳动推出的 SaaS ATS 平台。多家 AI 公司使用此平台（小米、NIO、MiniMax、智谱、iQIYI、01.AI、百川、智元）。
+飞书招聘（Feishu Recruiting）是字节跳动推出的 SaaS ATS 平台。目前已有 **小米、蔚来、MiniMax** 三家公司接入，分别代表两种租户模式。
 
-### 域名迁移
+### 两种租户模式
+
+| 模式 | 公司 | 域名 | CSRF | portal-type |
+|------|------|------|------|-------------|
+| internship | 小米 | `mioffice.cn` | 不需要 | 3 |
+| saas-career | 蔚来、MiniMax | `feishu.cn` | 需要 | 6 |
+
+**saas-career 模式**（蔚来、MiniMax）通过 Playwright 拦截 XHR 请求发现，需要先获取 CSRF token：
 
 ```
-旧域名 (已宕机):   {company}.jobs.f.mioffice.cn  (小米内部 Fork)
-新域名:            {company}.jobs.feishu.cn       (标准飞书)
+POST /api/v1/csrf/token → x-csrf-token header → POST /api/v1/search/job/posts
 ```
 
-`mioffice.cn` 是小米的飞书分叉域名。2026 年中该 CDN 全面宕机，所有基于此域名的 API 返回 502。小米是唯一仍在此域名上活跃的租户。
+### 新租户接入
 
-### API 需要 CSRF Token
+用 `scripts/discover_feishu_api.py` 自动发现：
 
-`nio.jobs.feishu.cn` 的 ATSX 平台已检测到，但 API 端点 `/api/v1/search/job/posts` 返回 405 Method Not Allowed。与字节跳动主站相同，飞书招聘 API 需要先获取 CSRF token：
-
-```python
-# 步骤 1: 获取 CSRF token
-GET /api/v1/csrf/token
-# → set-cookie: atsx-csrf-token=xxx
-
-# 步骤 2: 带 token 查询
-POST /api/v1/search/job/posts
-Header: x-csrf-token: xxx
+```bash
+python scripts/discover_feishu_api.py <公司名>
 ```
 
-### 后续扩展路线
+脚本用 Playwright 打开公司招聘页，拦截 XHR 请求，输出完整的 API 签名（URL、headers、body）。填入 `feishu_atsx.py` 的配置即可。
 
-| 步骤 | 内容 |
-| ---- | ---- |
-| 1 | 实现 CSRF token 自动获取 |
-| 2 | 验证 NIO (`nio.jobs.feishu.cn`) 的 API |
-| 3 | 确定 MiniMax / 智谱 / iQIYI 的租户子域名 |
-| 4 | 批量注册所有飞书 ATSX 租户 |
+### 未接入公司
 
-### 备选方案：Playwright 拦截
-
-如果 CSRF 流程过于复杂，可回退到浏览器自动化：
-1. 用 Playwright 打开公司招聘首页
-2. 拦截并记录 POST `/api/v1/search/job/posts` 的完整请求（headers + body）
-3. 在 Python 中复现该请求
+智谱 AI、iQIYI、01.AI、百川智能、智元机器人等公司的飞书招聘租户子域名尚未确定。可通过以下方式查找：
+1. 在公司官网找到"加入我们"链接
+2. 检查是否跳转到 `*.feishu.cn` 域名
+3. 用 `discover_feishu_api.py` 自动拦截
 
 ## 项目结构
 
