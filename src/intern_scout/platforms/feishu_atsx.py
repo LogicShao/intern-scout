@@ -238,6 +238,17 @@ NIO_CONFIG = {
     "requires_csrf": True,
 }
 
+MINIMAX_CONFIG = {
+    "company": "minimax",
+    "display_name": "MiniMax",
+    "api_root": "https://vrfi1sk8a0.jobs.feishu.cn/api/v1",
+    "site_root": "https://vrfi1sk8a0.jobs.feishu.cn",
+    "default_channel": "saas-career",
+    "website_path": "379481",
+    "portal_type": 6,
+    "requires_csrf": True,
+}
+
 
 def create_xiaomi() -> FeishuATSXAdapter:
     return FeishuATSXAdapter(**XIAOMI_CONFIG)
@@ -245,3 +256,7 @@ def create_xiaomi() -> FeishuATSXAdapter:
 
 def create_nio() -> FeishuATSXAdapter:
     return FeishuATSXAdapter(**NIO_CONFIG)
+
+
+def create_minimax() -> FeishuATSXAdapter:
+    return FeishuATSXAdapter(**MINIMAX_CONFIG)
