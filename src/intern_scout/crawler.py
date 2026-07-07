@@ -12,7 +12,7 @@ from intern_scout.platforms.beisen import (
     create_hellobike, create_genertec, create_huolala,
     create_ucloud, create_sugon,
 )
-from intern_scout.platforms.feishu_atsx import create_xiaomi
+from intern_scout.platforms.feishu_atsx import create_xiaomi, create_nio
 from intern_scout.platforms.huawei import create_huawei
 from intern_scout.platforms.oppo import create_oppo
 from intern_scout.reporter import format_output
@@ -21,6 +21,7 @@ from intern_scout.models import SearchResult
 ADAPTERS = {
     "vivo":       create_vivo,
     "xiaomi":     create_xiaomi,
+    "nio":        create_nio,
     "iflytek":    create_iflytek,
     "transsion":  create_transsion,
     "cxmt":       create_cxmt,

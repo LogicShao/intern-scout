@@ -27,6 +27,9 @@ class FeishuATSXAdapter(BaseAdapter):
         api_root: str,
         site_root: str,
         default_channel: str = "internship",
+        portal_type: int = 3,
+        requires_csrf: bool = False,
+        website_path: str | None = None,
         page_size: int = 20,
         max_pages: int = 15,
     ):
@@ -35,9 +38,30 @@ class FeishuATSXAdapter(BaseAdapter):
         self.api_root = api_root
         self.site_root = site_root
         self.channel = default_channel
+        self._portal_type = portal_type
+        self._requires_csrf = requires_csrf
+        self._website_path = website_path or default_channel
+        self._csrf_token: str | None = None
         self._page_size = page_size
         self._max_pages = max_pages
         self._session = requests.Session()
+
+    def _ensure_csrf(self):
+        if not self._requires_csrf or self._csrf_token:
+            return
+        base = self.api_root.rsplit("/api/v1", 1)[0]
+        try:
+            r = self._session.post(
+                f"{base}/api/v1/csrf/token",
+                json={"portal_entrance": 1},
+                headers={"User-Agent": random_user_agent(), "Accept": "application/json"},
+                timeout=10,
+            )
+            if r.ok:
+                data = r.json()
+                self._csrf_token = data.get("data", {}).get("token", "")
+        except Exception:
+            pass
 
     @property
     def source(self) -> str:
@@ -53,8 +77,12 @@ class FeishuATSXAdapter(BaseAdapter):
         }
         if self.channel != "social":
             h["portal-channel"] = self.channel
-            h["website-path"] = self.channel
-            h["Referer"] = f"{self.api_root.rsplit('/api/v1', 1)[0]}/{self.channel}/"
+            h["website-path"] = self._website_path
+            h["Referer"] = f"{self.api_root.rsplit('/api/v1', 1)[0]}/{self._website_path}/position"
+        if self._requires_csrf:
+            self._ensure_csrf()
+            if self._csrf_token:
+                h["x-csrf-token"] = self._csrf_token
         return h
 
     def _post(self, path: str, body: dict) -> dict:
@@ -81,7 +109,7 @@ class FeishuATSXAdapter(BaseAdapter):
             "keyword": (keyword or "").strip()[:60],
             "limit": ps,
             "offset": offset,
-            "portal_type": 3,
+            "portal_type": self._portal_type,
             "portal_entrance": 1,
             "language": "zh",
         }
@@ -195,8 +223,25 @@ XIAOMI_CONFIG = {
     "api_root": "https://xiaomi.jobs.f.mioffice.cn/api/v1",
     "site_root": "https://xiaomi.jobs.f.mioffice.cn",
     "default_channel": "internship",
+    "portal_type": 3,
+    "requires_csrf": False,
+}
+
+NIO_CONFIG = {
+    "company": "nio",
+    "display_name": "蔚来",
+    "api_root": "https://nio.jobs.feishu.cn/api/v1",
+    "site_root": "https://nio.jobs.feishu.cn",
+    "default_channel": "saas-career",
+    "website_path": "campus",
+    "portal_type": 6,
+    "requires_csrf": True,
 }
 
 
 def create_xiaomi() -> FeishuATSXAdapter:
     return FeishuATSXAdapter(**XIAOMI_CONFIG)
+
+
+def create_nio() -> FeishuATSXAdapter:
+    return FeishuATSXAdapter(**NIO_CONFIG)
