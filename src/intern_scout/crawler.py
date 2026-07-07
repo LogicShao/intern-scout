@@ -8,12 +8,16 @@
 
 from intern_scout.platforms.beisen import create_vivo
 from intern_scout.platforms.feishu_atsx import create_xiaomi
+from intern_scout.platforms.huawei import create_huawei
+from intern_scout.platforms.oppo import create_oppo
 from intern_scout.reporter import format_output
 from intern_scout.models import SearchResult
 
 ADAPTERS = {
     "vivo": create_vivo,
     "xiaomi": create_xiaomi,
+    "huawei": create_huawei,
+    "oppo": create_oppo,
 }
 
 
@@ -25,8 +29,8 @@ def crawl_one(company: str, keyword: str = "", limit: int = 20) -> SearchResult:
             positions=[], message=f"Unknown company: {company}. Supported: {list(ADAPTERS)}",
         )
     adapter = factory()
-    pages = max(1, (limit // adapter._page_size) + 1)
-    result = adapter.fetch_all(keyword=keyword, max_pages=pages, page_size=adapter._page_size)
+    page_size = getattr(adapter, "_page_size", 20)
+    result = adapter.fetch_all(keyword=keyword, max_pages=1, page_size=limit)
     if result.ok and len(result.positions) > limit:
         result.positions = result.positions[:limit]
         result.fetched = len(result.positions)
