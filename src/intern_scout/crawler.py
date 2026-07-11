@@ -77,6 +77,7 @@ def main():
     group.add_argument("--companies", help="多公司 (逗号分隔)")
     group.add_argument("--all", action="store_true", help="所有已支持公司")
     group.add_argument("--list", action="store_true", help="列出已支持公司")
+    group.add_argument("--discover", help="发现新公司 API: URL 或公司名 (e.g. https://careers.example.com)")
     parser.add_argument("--keyword", default="", help="搜索关键词")
     parser.add_argument("--limit", type=int, default=20, help="最大返回数 (default: 20)")
     parser.add_argument("--output", choices=["json", "table", "excel"], default="json")
@@ -86,6 +87,22 @@ def main():
 
     if args.list:
         print("Supported companies:", ", ".join(ADAPTERS.keys()))
+        return
+
+    if args.discover:
+        from intern_scout.discover import discover
+        import json
+        result = discover(args.discover)
+        if result.matched:
+            print(f"✅ Matched: {result.ats_family} (confidence: {result.confidence})")
+            print(f"\nSuggested config ({result.ats_family} adapter):")
+            print(json.dumps(result.suggested_config, indent=2, ensure_ascii=False))
+        else:
+            print(f"❌ {result.note}")
+            if result.captured_endpoints:
+                print(f"\nCaptured {len(result.captured_endpoints)} XHR endpoints for manual analysis:")
+                for ep in result.captured_endpoints[:10]:
+                    print(f"  [{ep['method']}] {ep['url'][:120]}")
         return
 
     if args.all:
