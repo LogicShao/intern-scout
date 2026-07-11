@@ -2,7 +2,7 @@
 
 中国科技公司官网实习岗位爬取工具。直接调用招聘站内部 API，无需登录，无需代理。
 
-**17 家公司，1000+ 实时实习岗位，一条命令全量搜索。**
+**17 家公司，1100+ 实时实习岗位，一条命令全量搜索。**
 
 ```bash
 intern-scout --all --keyword "后端" --limit 20 --output table
@@ -82,7 +82,7 @@ JSON 输出示例：
 
 ## 已支持公司
 
-### API 直连（15 家，无需浏览器）
+### API 直连（16 家，无需浏览器）
 
 | 公司 | ATS 平台 | 实习岗位数 |
 | ---- | -------- | ---------- |
@@ -102,13 +102,13 @@ JSON 输出示例：
 | 货拉拉 | 北森 iTalent | 2 |
 | UCloud | 北森 iTalent | 11 |
 | 中科曙光 | 北森 iTalent | 3 |
+| **OPPO** | 自研 openapi | 98 |
 
-### Playwright 浏览器模式（2 家，需系统依赖）
+### Playwright 浏览器模式（1 家，需系统依赖）
 
 | 公司 | 说明 |
 | ---- | ---- |
 | **华为** | 自研 portal5 架构，需 Playwright 拦截 XHR |
-| **OPPO** | 自研 React SPA，不依赖任何已知 ATS |
 
 > 浏览器模式需要系统库：`apt install libnspr4 libnss3 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2`
 
@@ -127,10 +127,10 @@ JSON 输出示例：
     ┌──────────────┼──────────────┐
     │              │              │
 ┌───▼────────┐ ┌──▼───────┐ ┌───▼──────────┐
-│ 北森 iTalent │ │ 飞书 ATSX │ │  自研 API    │
-│ (zhiye.com) │ │(feishu.cn)│ │  (Playwright) │
+│ 北森 iTalent │ │ 飞书 ATSX │ │   自研 API    │
+│ (zhiye.com) │ │(feishu.cn)│ │  (openapi)    │
 │             │ │           │ │              │
-│  13 家公司   │ │  小米      │ │  华为, OPPO  │
+│  13 家公司   │ │  3 家公司  │ │  OPPO, 华为   │
 └─────────────┘ └───────────┘ └──────────────┘
 ```
 
