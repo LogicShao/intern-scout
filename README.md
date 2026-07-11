@@ -199,22 +199,20 @@ python scripts/discover_feishu_api.py <公司名>
 intern-scout/
 ├── pyproject.toml
 ├── README.md
-├── src/intern_scout/
-│   ├── crawler.py          # CLI 主入口
-│   ├── models.py           # Position, SearchResult 数据模型
-│   ├── reporter.py         # JSON/Markdown/Excel 输出
-│   ├── utils.py            # rate_limit, deduplicate, clean_html
-│   └── platforms/
-│       ├── base.py         # BaseAdapter 基类
-│       ├── beisen.py       # 北森 iTalent (13 家租户)
-│       ├── feishu_atsx.py  # 飞书 ATSX (小米)
-│       ├── huawei.py       # 华为 (Playwright)
-│       └── oppo.py         # OPPO (Playwright)
-└── .sisyphus/
-    ├── specs/intern-crawler-skill.md
-    └── skills/intern-crawler/
-        ├── SKILL.md
-        └── config.yaml
+├── scripts/
+│   ├── discover_feishu_api.py   # 飞书 ATSX API 自动发现
+│   └── discover_oppo_api.py     # OPPO API 自动发现
+└── src/intern_scout/
+    ├── crawler.py               # CLI 主入口
+    ├── models.py                # Position, SearchResult 数据模型
+    ├── reporter.py              # JSON/Markdown/Excel 输出
+    ├── utils.py                 # rate_limit, deduplicate, clean_html
+    └── platforms/
+        ├── base.py              # BaseAdapter 基类
+        ├── beisen.py            # 北森 iTalent (13 家租户)
+        ├── feishu_atsx.py       # 飞书 ATSX (3 家: 小米/蔚来/MiniMax)
+        ├── huawei.py            # 华为 (329 岗)
+        └── oppo.py              # OPPO (98 岗)
 ```
 
 ## 贡献指南
