@@ -15,6 +15,8 @@ from intern_scout.platforms.beisen import (
 from intern_scout.platforms.feishu_atsx import create_xiaomi, create_nio, create_minimax
 from intern_scout.platforms.huawei import create_huawei
 from intern_scout.platforms.oppo import create_oppo
+from intern_scout.platforms.jd import create_jd
+from intern_scout.platforms.pdd import create_pdd
 from intern_scout.reporter import format_output
 from intern_scout.models import SearchResult
 
@@ -37,6 +39,8 @@ ADAPTERS = {
     "sugon":      create_sugon,
     "huawei":     create_huawei,
     "oppo":       create_oppo,
+    "jd":         create_jd,
+    "pdd":        create_pdd,
 }
 
 
